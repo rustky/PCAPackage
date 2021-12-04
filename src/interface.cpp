@@ -18,11 +18,12 @@ NumericMatrix PCA_interface(NumericMatrix data_mat,
   double *data_ptr = &data_mat[0];
   int N_rows = data_mat.nrow();
   int N_cols = data_mat.ncol();
-  NumericMatrix low_dim_mat(N_rows,num_components);
+  NumericMatrix low_dim_mat(N_rows,N_cols);
   double *low_dim_ptr = &low_dim_mat[0];
   int status = PCA(data_ptr, N_rows, N_cols, num_components, low_dim_ptr);
   if(status == ERROR_TOO_MANY_COMPONENTS){
     Rcpp::stop("num_comps must be less than or equal to N_cols!");
   }
+
   return low_dim_mat;
 }

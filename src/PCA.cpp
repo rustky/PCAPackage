@@ -19,22 +19,22 @@ int PCA(
   if(num_comps > N_cols){
     return ERROR_TOO_MANY_COMPONENTS;
   }
-  // Eigen::Map<Eigen::MatrixXd> data_mat(
-  //   data_ptr, N_rows, N_cols);
   
   arma::mat data_mat(data_ptr,N_rows,N_cols);
   arma::mat U;
   arma::vec s;
   arma::mat V;
   
-  
-  // V = arma::shuffle(data_mat);
-  cx_vec eigval = arma::eig_gen(data_mat);
-  // arma::svd_econ(U, s, V, data_mat);
-  // arma::mat diagonal_mat = diagmat(s);
-  // arma::mat rotation_ele = U * diagonal_mat;
-  // arma::mat principal_comps = rotation_ele.submat(1,N_rows,1,num_comps)
-  //   * arma::trans(V.submat(1,N_rows,1,num_comps));
-  // low_dim_ptr = principal_comps.memptr();
+  arma::svd_econ(U, s, V, data_mat);
+  arma::mat diagonal_mat = diagmat(s);
+  arma::mat rotation_ele = U * diagonal_mat;
+  arma::mat V_trans = V.cols(0,num_comps-1).t();
+  arma::mat principal_comps = rotation_ele.cols(0,num_comps-1) *
+    V_trans;
+  for(int rows = 0; rows < N_rows; rows++){
+    for(int cols = 0; cols < N_cols; cols++){
+      low_dim_ptr[cols*N_rows + rows] = principal_comps(rows,cols);
+    }
+  }
   return 0;
 }
